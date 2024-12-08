@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assignment 1</title>
+    <style>
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Body Styling */
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to right, #2c3e50, #4ca1af);
+            color: #fff;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Heading Styling */
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 2rem;
+            color: #ffcd02;
+        }
+
+        /* Section Title Styling */
+        h2 {
+            color: #ffcd02;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #ffcd02;
+            display: inline-block;
+            padding-bottom: 5px;
+        }
+
+        h3 {
+            color: #ffcd02;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #ffcd02;
+            display: inline-block;
+            padding-bottom: 5px;
+        }
+
+        /* Code Styling */
+        code {
+            display: block;
+            background: #1e272e;
+            color: #00d8ff;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95rem;
+            overflow-x: auto;
+        }
+
+        /* Footer Styling */
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.85rem;
+            color: #dcdde1;
+        }
+
+        /* Highlighting Code Blocks */
+        code span {
+            color: #ff9f43;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>MongoDB Assignment 1</h1>
+
+        <h2>1. Find all movies where:</h2><br>
+        <h3>i. Runtime is greater than 150 minutes:</h3>
+        <code>db.movies.find({runtime:{$gt:150}}).count()</code>
+        <h3>ii. Rating is higher than 8.5</h3>
+        <code>db.movies.find({rating:{$gt:8.5}}).count()</code>
+        <h3>iii. Year is between 2000 and 2015 (inclusive)</h3>
+        <code>db.movies.find({year:{$gt:2000,$lt:2015}}).count()</code>
+        <h3>iv. Box office earnings were less than 500 million OR greater than 1 billion</h3>
+        <code>db.movies.find({boxOffice:{$gt:500.0,$lt:1000.0}}).count()</code>
+
+        <h2>2. Find movies directed by Christopher Nolan that won an Oscar, made more than 700 million at box office, and are available on Netflix.:</h2>
+        <code>
+            db.movies.find({$and:[{director:"Christopher Nolan"}, {isOscarWinner:true}, 
+            {boxOffice:{$gt:700}}, {streamingOn:"Netflix"}]},{title:true,_id:false})
+        </code>
+
+        <h2>3. Find movies that have special features, where both behind-the-scenes content and deleted scenes are available.</h2>
+        <code>db.movies.find({"specialFeatures.behindTheScenes":true, "specialFeatures.deletedScenes":true},{_id:false})</code>
+
+        <h2>4. Find movies where either Carrie-Anne Moss or Morgan Freeman is in the cast, have language options available, and can be watched on at least 2 streaming platforms.</h2>
+        <code>
+            db.movies.find({$and:[{$or:[{cast:"Carrie-Anne Moss"},{cast:"Morgan Freeman"}]},
+            {languages:{$exists:true}}, {streamingOn:{$size:2}}]},{title:true,_id:false})
+        </code>
+
+        <h2>5. For the movie "Inception", add Chinese to its languages.</h2>
+        <code>db.movies.updateOne({title:"Inception"},{$push:{languages:"Chinese"}})</code>
+
+        <h2>6. Add Michael Caine to the cast of all Christopher Nolan movies.</h2>
+        <code>db.movies.updateMany({director:"Christopher Nolan"},{$push:{cast:"Michael Caine"}})</code>
+
+        <h2>7. Add Disney+ as a streaming option for all movies longer than 140 minutes.</h2>
+        <code>db.movies.updateMany({runtime:{$gt:140}},{$push:{streamingOn:"Disney+"}})</code>
+
+        <h2>8. Find movies that have exactly 2 genres and have box office earnings listed, but don't have any special features.</h2>
+        <code>db.movies.find({genre:{$size:2}},{boxOffice:true,_id:false})</code>
+
+        <h2>9. Remove all movies with rating less than 8.0.</h2>
+        <code>db.movies.deleteMany({rating:{$lt:8.0}})</code>
+
+        <h2>10. Remove Netflix from the streaming platforms of all movies released before 2000.</h2>
+        <code>db.movies.updateMany({year:{$lt:2000}},{$pull:{streamingOn:"Netflix"}})</code>
+
+        <h2>11. Find movies where box office earnings are more than 10 times the runtime.</h2>
+        <code>db.movies.find({$expr:{$gt:["$boxOffice", {$multiply:[10, "$runtime"]}]}})</code>
+
+        <h2>12. Find all movies available on exactly the same streaming platforms as "The Matrix".</h2>
+        <code></code>
+
+        <h2>13. Find movies that have both "Action" and "Sci-Fi" in their genres.</h2>
+        <code>db.movies.find({$and:[{genre:"Action"},{genre:"Sci-Fi"}]})</code>
+
+        <h2>14. Find movies where "Action" is the first genre listed.</h2>
+        <code>db.movies.find({"genre.0": "Action"})</code>
+
+        <h2>15. Find movies that have exactly 3 cast members.</h2>
+        <code>db.movies.find({cast:{$size:3}})</code>
+    </div>
+
+    <footer>
+        &copy; 2024 MongoDB Assignment. Designed by Hardeep Ijardar.
+    </footer>
+</body>
+</html>
